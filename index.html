@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071c19">
+  <title>OFOQ — أفق</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
+</head>
+
+<body>
+
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#">
+      <span class="brand-symbol">أ</span>
+      <span class="brand-text">
+        <strong>OFOQ</strong>
+        <small>أفق · رؤية مختلفة</small>
+      </span>
+    </a>
+
+    <div class="top-status">
+      <span class="status-dot"></span>
+      <span id="topStatus">جاهز للبدء</span>
+    </div>
+
+    <div class="version">AI VISION <span>01</span></div>
+  </header>
+
+  <main class="layout">
+
+    <section class="intro">
+      <div class="eyebrow"><span></span> مساعد الرؤية الذكي</div>
+      <h1>العالم أمامك،<br><span>بصوت أوضح.</span></h1>
+      <p>
+        أفق يساعدك على استكشاف ما تراه الكاميرا،
+        من خلال اكتشاف بعض الأشياء ووصفها صوتيًا.
+      </p>
+    </section>
+
+    <section class="workspace">
+
+      <div class="camera-card">
+
+        <div class="camera-header">
+          <div>
+            <span class="section-label">LIVE VISION</span>
+            <h2>نافذة الرؤية</h2>
+          </div>
+
+          <div class="live-badge" id="liveBadge">
+            <span></span> غير نشط
+          </div>
+        </div>
+
+        <div class="camera-frame" id="cameraFrame">
+
+          <video id="video" autoplay muted playsinline></video>
+          <canvas id="canvas"></canvas>
+
+          <div class="camera-placeholder" id="placeholder">
+            <div class="camera-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="6" width="13" height="12" rx="3"/>
+                <path d="M16 10L21 7V17L16 14"/>
+              </svg>
+            </div>
+
+            <h3>الرؤية لم تبدأ بعد</h3>
+            <p>اضغط تشغيل لبدء تحليل الكاميرا</p>
+          </div>
+
+          <div class="camera-overlay top-left"></div>
+          <div class="camera-overlay top-right"></div>
+          <div class="camera-overlay bottom-left"></div>
+          <div class="camera-overlay bottom-right"></div>
+
+          <div class="scan-line" id="scanLine"></div>
+
+          <div class="camera-footer">
+            <span id="cameraInfo">CAMERA STANDBY</span>
+            <span id="fpsInfo">-- FPS</span>
+          </div>
+        </div>
+
+        <div class="camera-controls">
+          <button class="primary-button" id="startBtn">
+            <span class="button-icon">▶</span>
+            <span>ابدأ الرؤية</span>
+          </button>
+
+          <button class="secondary-button" id="stopBtn" disabled>
+            إيقاف
+          </button>
+        </div>
+
+        <div class="notice">
+          <span class="notice-icon">i</span>
+          <span>أفق نموذج تجريبي، ولا يُعتمد عليه وحده أثناء التنقل.</span>
+        </div>
+      </div>
+
+      <aside class="side-panel">
+
+        <div class="panel-card intelligence-card">
+          <div class="panel-heading">
+            <span class="section-label">INTELLIGENCE</span>
+            <span class="mini-orbit">✳</span>
+          </div>
+
+          <h3 id="engineStatus">المحرك في وضع الاستعداد</h3>
+          <p id="engineDescription">ابدأ الرؤية لتفعيل تحليل الأشياء.</p>
+
+          <div class="engine-progress">
+            <div id="engineProgress"></div>
+          </div>
+
+          <div class="engine-meta">
+            <span>محرك اكتشاف الأشياء</span>
+            <span id="enginePercent">0%</span>
+          </div>
+        </div>
+
+        <div class="panel-card objects-card">
+          <div class="objects-heading">
+            <div>
+              <span class="section-label">DETECTION FEED</span>
+              <h3>المشهد المكتشف</h3>
+            </div>
+
+            <span class="count-badge" id="objectCount">0</span>
+          </div>
+
+          <div class="objects-list" id="objectsList">
+            <div class="empty-state">
+              <span class="empty-symbol">⌁</span>
+              <p>الأشياء المكتشفة هتظهر هنا</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card speech-card">
+          <div class="panel-heading">
+            <span class="section-label">VOICE SYSTEM</span>
+            <span class="voice-symbol">◖))</span>
+          </div>
+
+          <h3>النظام الصوتي</h3>
+
+          <div class="voice-row">
+            <span>لغة النطق</span>
+            <span class="voice-value">العربية</span>
+          </div>
+
+          <div class="voice-row">
+            <span>حالة الصوت</span>
+            <span class="voice-value" id="voiceStatus">جاهز</span>
+          </div>
+
+          <button class="voice-test" id="testVoice">
+            <span>◖</span> تجربة الصوت العربي
+          </button>
+        </div>
+
+      </aside>
+    </section>
+
+    <footer class="footer">
+      <span>OFOQ © 2026</span>
+      <span>MADE TO MAKE VISION MORE ACCESSIBLE</span>
+    </footer>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
